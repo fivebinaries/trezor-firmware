@@ -686,8 +686,11 @@ bool compile_input_script_sig(TxInputType *tinput) {
     }
   }
   if (!coin_known_path_check(coin, tinput->script_type, tinput->address_n_count,
-                             tinput->address_n, false)) {
-    if (config_getSafetyCheckLevel() == SafetyCheckLevel_Strict) {
+                             tinput->address_n, true)) {
+    if (!coin_known_path_check(coin, tinput->script_type,
+                               tinput->address_n_count, tinput->address_n,
+                               false) &&
+        config_getSafetyCheckLevel() == SafetyCheckLevel_Strict) {
       return false;
     }
 
@@ -696,8 +699,6 @@ bool compile_input_script_sig(TxInputType *tinput) {
                       _("Continue at your"), _("own risk!"), NULL);
     if (!protectButton(ButtonRequestType_ButtonRequest_UnknownDerivationPath,
                        false)) {
-      fsm_sendFailure(FailureType_Failure_ActionCancelled, NULL);
-      layoutHome();
       return false;
     }
   }

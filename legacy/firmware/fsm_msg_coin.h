@@ -185,7 +185,9 @@ void fsm_msgGetAddress(const GetAddress *msg) {
 
     if (!coin_known_path_check(coin, msg->script_type, msg->address_n_count,
                                msg->address_n, true)) {
-      if (config_getSafetyCheckLevel() == SafetyCheckLevel_Strict) {
+      if (!coin_known_path_check(coin, msg->script_type, msg->address_n_count,
+                                 msg->address_n, false) &&
+          config_getSafetyCheckLevel() == SafetyCheckLevel_Strict) {
         fsm_sendFailure(FailureType_Failure_DataError, _("Forbidden key path"));
         layoutHome();
         return;
